@@ -8,7 +8,8 @@ socket.on('connect',function () {
     console.log('Connected to server')
 
     //Create 'createMessage' event and send to server
-    // socket.emit('createMessage',{   //we used io.emit('createMessage) instead
+    //*we used io.emit('createMessage) instead, in server.js
+    // socket.emit('createMessage',{   
     //     from:'myemail@example.com',
     //     text:'testing newMessage event'
     // })

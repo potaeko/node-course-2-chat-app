@@ -24,28 +24,59 @@ app.use(express.static(publicPath));
 // in order to access the socket object
 io.on('connection',(socket)=>{
     console.log('New user connected');
-    
+
     //Chat App
 
+    //Exercise
+    //socket.emit from:Admin, text:Welcome to the chat app
+    socket.emit('newMessage',{
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+    });
+
+    //socket.broadcase.emit from:Admin, text:New user joined
+    socket.broadcast.emit('newMessage',{
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
+
     //Create 'newMessage' event and send to client side
-    //socket.emit,emit to single connection
+
+    //CASE 1: emit to single connection
+    //socket.emit,
     // socket.emit('newMessage', { 
     //     from:'newJob@example.com',
     //     text:'You are hired!',
     //     createdAt:234
     // })
 
-    //listen to 'createMessage' event from client side
+    //CASE 2: emit to all connection
+    //io.emit,
+    //***listen to 'createMessage' event from client side
     socket.on('createMessage', (message)=>{
-        console.log('createMessage from client',message); 
-    //io.emit, emit to all connection
-    //We used io.emit('newMessage') instead of socket.emit('newMessage'
+        console.log('createMessage from client',message);  
     io.emit('newMessage',{
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
         });
     });
+    
+    //CASE 3: emit to all except myself
+    //socket.broadcast.emit
+    // socket.on('createMessage', (message)=>{
+    //     console.log('createMessage from client',message); 
+    // socket.broadcast.emit('newMessage',{
+    //     from: message.from,
+    //     text: message.text,
+    //     createdAt: new Date().getTime()
+    //     });
+    // });
+
+    
+
 
 
 
