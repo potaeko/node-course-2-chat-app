@@ -18,34 +18,34 @@ var server = http.createServer(app)
 var io = socketIO(server);
 
 app.use(express.static(publicPath));
+
 //listen to specific event
+// We need to listen to events within the io.on('connection') event on the server 
+// in order to access the socket object
 io.on('connection',(socket)=>{
     console.log('New user connected');
     
-    //**Example Email event
-    //creating 'newEmail', new email event to notify client from server side
-    // socket.emit('newEmail',{
-    //     from: 'mike@example.com',
-    //     text: 'Hey, what is going on',
-    //     createAt: 123
-    // });
-    //creating 'creteEmail', new email event  from client side
-    // socket.on('createEmail', (newEmail)=>{
-    //     console.log('createEmail', newEmail);
-    // })
-    //================End of Example==========
-
     //Chat App
+
     //Create 'newMessage' event and send to client side
-    socket.emit('newMessage', {
-        from:'newJob@example.com',
-        text:'You are hired!',
-        createdAt:234
-    })
+    //socket.emit,emit to single connection
+    // socket.emit('newMessage', { 
+    //     from:'newJob@example.com',
+    //     text:'You are hired!',
+    //     createdAt:234
+    // })
+
     //listen to 'createMessage' event from client side
-    socket.on('createMessage', (newMessage)=>{
-        console.log('crateMessage from client',newMessage)
-    })
+    socket.on('createMessage', (message)=>{
+        console.log('createMessage from client',message); 
+    //io.emit, emit to all connection
+    //We used io.emit('newMessage') instead of socket.emit('newMessage'
+    io.emit('newMessage',{
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
+    });
 
 
 
