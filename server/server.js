@@ -7,6 +7,7 @@ const publicPath = path.join(__dirname, '../public') //https://nodejs.org/api/pa
 // console.log(__dirname+ '/../public'); The-complete-nodejs-developer-course-2/node-chat-app/server/../public
 // console.log(publicPath) The-complete-nodejs-developer-course-2/node-chat-app/public
 
+const {generateMessage} = require('./utils/message');
 const port = process.env.PORT || 3000;
 const http = require('http');
 const express = require('express');
@@ -29,18 +30,22 @@ io.on('connection',(socket)=>{
 
     //Exercise
     //socket.emit from:Admin, text:Welcome to the chat app
-    socket.emit('newMessage',{
-        from: 'Admin',
-        text: 'Welcome to the chat app',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin',' Welcome to the chat app'));
+    //we passed in generateMessage
+    // { 
+    //     from: 'Admin',
+    //     text: 'Welcome to the chat app',
+    //     createdAt: new Date().getTime()
+    // });
 
     //socket.broadcase.emit from:Admin, text:New user joined
-    socket.broadcast.emit('newMessage',{
-        from: 'Admin',
-        text: 'New user joined',
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage',generateMessage('Admin','New user joined'))
+    //we passed in generateMessage
+    // {
+    //     from: 'Admin',
+    //     text: 'New user joined',
+    //     createdAt: new Date().getTime()
+    // });
 
     //Create 'newMessage' event and send to client side
 
@@ -57,12 +62,14 @@ io.on('connection',(socket)=>{
     //***listen to 'createMessage' event from client side
     socket.on('createMessage', (message)=>{
         console.log('createMessage from client',message);  
-    io.emit('newMessage',{
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
-    });
+    io.emit('newMessage',generateMessage(message.from, message.text));
+    //we passed in generateMessage
+    // {
+    //         from: message.from,
+    //         text: message.text,
+    //         createdAt: new Date().getTime()
+    // });
+});
     
     //CASE 3: emit to all except myself
     //socket.broadcast.emit
