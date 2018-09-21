@@ -60,7 +60,7 @@ io.on('connection',(socket)=>{
     //CASE 2: emit to all connection
     //io.emit,
     //***listen to 'createMessage' event from client side
-    socket.on('createMessage', (message)=>{
+    socket.on('createMessage', (message, callback)=>{
         console.log('createMessage from client',message);  
     io.emit('newMessage',generateMessage(message.from, message.text));
     //we passed in generateMessage
@@ -69,6 +69,7 @@ io.on('connection',(socket)=>{
     //         text: message.text,
     //         createdAt: new Date().getTime()
     // });
+    callback('This is from the server');
 });
     
     //CASE 3: emit to all except myself
