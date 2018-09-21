@@ -7,7 +7,7 @@ const publicPath = path.join(__dirname, '../public') //https://nodejs.org/api/pa
 // console.log(__dirname+ '/../public'); The-complete-nodejs-developer-course-2/node-chat-app/server/../public
 // console.log(publicPath) The-complete-nodejs-developer-course-2/node-chat-app/public
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 const port = process.env.PORT || 3000;
 const http = require('http');
 const express = require('express');
@@ -83,8 +83,15 @@ io.on('connection',(socket)=>{
     //     });
     // });
 
-    
+    //listeb to createLocationMessage
+    socket.on('createLocationMessage',(coords)=>{
+        //To show latitude and longitude in plain text
+        // io.emit('newMessage', generateMessage('Admin', `${coords.latitude}, ${coords.longitude}`))
 
+        //To show map result from longitude and latitude
+        //we added genereateLocationMessage at the top from utils/message
+        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
+    });
 
 
 
