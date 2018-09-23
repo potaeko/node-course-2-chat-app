@@ -69,7 +69,7 @@ io.on('connection',(socket)=>{
     //         text: message.text,
     //         createdAt: new Date().getTime()
     // });
-    callback('This is from the server');
+    callback();
 });
     
     //CASE 3: emit to all except myself
