@@ -193,3 +193,7 @@
       margin-right: 0px;
     }
   }
+
+  @-ms-viewport{
+    width: device-width;
+  }
