@@ -19,28 +19,47 @@ socket.on('disconnect',function () {
     console.log('Disconnected from server')
 });
 
+//Message
 //listen 'newMessage' event from server side
 socket.on('newMessage', function(message){
     console.log('newMessage', message);
     var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
+    var template = jQuery('#message-template').html();//selected by id
+    var html = Mustache.render(template, {
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime //above formattedTime
+    });
+    jQuery('#messages').append(html);
+    //*We use in mustache.js and template instead of code below
+    // var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
 
-    //using jQuery here
-    var li = jQuery('<li></li>');
-    li.text(`${message.from} ${formattedTime}: ${message.text}`);
+    // //using jQuery here
+    // var li = jQuery('<li></li>');
+    // li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
-    jQuery('#messages').append(li);
+    // jQuery('#messages').append(li);
 });
 
+//Location
 //listen 'newLocationMessage' event
 socket.on('newLocationMessage', function(message){
-    var li = jQuery('<li></li>');
-    var a = jQuery('<a target="_blank">My current location</a>');// _blank will open a new broswer tab
+    
     var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
-
-    li.text(`${message.from}${formattedTime}: `);
-    a.attr('href', message.url);// set the value to url
-    li.append(a);
-    jQuery('#messages').append(li);
+    var template = jQuery('#location-message-template').html()//selected by id
+    var html = Mustache.render(template,{
+        from: message.from,
+        url: message.url,
+        createdAt : formattedTime,
+    });
+    //*We use in mustache.js and template instead of code below
+    // var formattedTime = moment(message.createdAt).format('h:mm a');
+    // var li = jQuery('<li></li>');
+    // var a = jQuery('<a target="_blank">My current location</a>');//_blank will open a new broswer tab
+    // li.text(`${message.from}${formattedTime}: `);
+    // a.attr('href', message.url);// set the value to url
+    // li.append(a);
+    jQuery('#messages').append(html);
 });
 
 //*Removed after using jQuery
