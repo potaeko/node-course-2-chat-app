@@ -22,19 +22,22 @@ socket.on('disconnect',function () {
 //listen 'newMessage' event from server side
 socket.on('newMessage', function(message){
     console.log('newMessage', message);
+    var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
 
     //using jQuery here
     var li = jQuery('<li></li>');
-    li.text(`${message.from}:${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery('#messages').append(li);
 });
 
+//listen 'newLocationMessage' event
 socket.on('newLocationMessage', function(message){
     var li = jQuery('<li></li>');
     var a = jQuery('<a target="_blank">My current location</a>');// _blank will open a new broswer tab
+    var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
 
-    li.text(`${message.from}:`);
+    li.text(`${message.from}${formattedTime}: `);
     a.attr('href', message.url);// set the value to url
     li.append(a);
     jQuery('#messages').append(li);
