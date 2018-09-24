@@ -3,6 +3,29 @@
 
 var socket = io();
 
+//Scroll to bottom if user is close to bottom
+function scrollToBottom() {
+    //Selectors
+    var messages = jQuery('#messages');
+    var newMessage = messages.children('li:last-child') //choose the last child
+
+    //Heights Variable
+    //messages
+    var clientHeight = messages.prop('clientHeight');
+    var scrollTop = messages.prop('scrollTop');
+    var scrollHeight = messages.prop('scrollHeight');
+    //newMessages
+    var newMessageHeight = newMessage.innerHeight(); //calculate the height of the message and apply via CSS
+    var lastMessageHeight = newMessage.prev().innerHeight(); //second last child
+
+    //Scroll Condition
+    if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight>= scrollHeight){
+        //Testing
+        // console.log('Should scroll');
+        messages.scrollTop(scrollHeight)
+    }
+};
+
 // socket.on('connect',()=>{  //we want to use traditional function since it will fail in mobile, safari or mozilla
 socket.on('connect',function () { 
     console.log('Connected to server')
@@ -31,6 +54,7 @@ socket.on('newMessage', function(message){
         createdAt: formattedTime //above formattedTime
     });
     jQuery('#messages').append(html);
+    scrollToBottom();//added autoscroll
     //*We use in mustache.js and template instead of code below
     // var formattedTime = moment(message.createdAt).format('h:mm a');//using moment format
 
@@ -60,6 +84,7 @@ socket.on('newLocationMessage', function(message){
     // a.attr('href', message.url);// set the value to url
     // li.append(a);
     jQuery('#messages').append(html);
+    scrollToBottom();//added autoscroll
 });
 
 //*Removed after using jQuery
