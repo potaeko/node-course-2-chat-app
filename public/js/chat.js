@@ -3,7 +3,7 @@
 
 var socket = io();
 
-//Scroll to bottom if user is close to bottom
+//Scroll to bottom only if the user is close to bottom
 function scrollToBottom() {
     //Selectors
     var messages = jQuery('#messages');
@@ -11,17 +11,24 @@ function scrollToBottom() {
 
     //Heights Variable
     //messages
+    //clientHeight is the user view
     var clientHeight = messages.prop('clientHeight');
+    //scrollTop is the top unseen part
     var scrollTop = messages.prop('scrollTop');
+    //scrollHeight is total height of the content.
     var scrollHeight = messages.prop('scrollHeight');
     //newMessages
-    var newMessageHeight = newMessage.innerHeight(); //calculate the height of the message and apply via CSS
+    var newMessageHeight = newMessage.innerHeight(); //calculate the height of the message
     var lastMessageHeight = newMessage.prev().innerHeight(); //second last child
 
     //Scroll Condition
-    if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight>= scrollHeight){
+    //if scroll Top + clientHeight = scrollHeight, we want to scroll down when received the new message.
+    if(scrollTop+ clientHeight + newMessageHeight + lastMessageHeight>= scrollHeight){
         //Testing
         // console.log('Should scroll');
+
+        // Set the current vertical position of the scroll bar 
+        //scrollTop value is a measurement of the distance from the element's top to its topmost visible content
         messages.scrollTop(scrollHeight)
     }
 };
