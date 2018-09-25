@@ -36,6 +36,16 @@ function scrollToBottom() {
 // socket.on('connect',()=>{  //we want to use traditional function since it will fail in mobile, safari or mozilla
 socket.on('connect',function () { 
     console.log('Connected to server')
+    var params = jQuery.deparam(window.location.search); //to get the object of name and room
+
+    socket.emit('join', params, function(err){
+        if (err){
+            alert(err); //show alert
+            window.location.href ='/';//redirect to the home page
+        } else{
+            console.log('No error');
+        }
+    })
 
     //Create 'createMessage' event and send to server
     //*we used io.emit('createMessage) instead, in server.js

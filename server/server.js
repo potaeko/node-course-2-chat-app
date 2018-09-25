@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000;
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const {isRealString} = require('./utils/validation.js');
 
 
 var app = express() //web server
@@ -28,24 +29,41 @@ io.on('connection',(socket)=>{
 
     //Chat App
 
-    //Exercise
-    //socket.emit from:Admin, text:Welcome to the chat app
-    socket.emit('newMessage', generateMessage('Admin',' Welcome to the chat app'));
-    //we passed in generateMessage
-    // { 
-    //     from: 'Admin',
-    //     text: 'Welcome to the chat app',
-    //     createdAt: new Date().getTime()
-    // });
+    //**listen to join event */
+    socket.on('join', (params, callback)=>{
+        if(!isRealString(params.name) || !isRealString(params.room)){ //if one of name or room is not a real string
+            callback('Name and Room name are required.');
+        }
 
-    //socket.broadcase.emit from:Admin, text:New user joined
-    socket.broadcast.emit('newMessage',generateMessage('Admin','New user joined'))
-    //we passed in generateMessage
-    // {
-    //     from: 'Admin',
-    //     text: 'New user joined',
-    //     createdAt: new Date().getTime()
-    // });
+        socket.join(params.room);
+        // socket.leave('room name')
+
+        //How to 
+        //io.emit->io.to('room name').emit
+        //socket.broadcast.emit->socket.broadcast.to('room name').emit ,broadcast to specific room
+        //socket.emit
+        
+        //To one user
+        //socket.emit from:Admin, text:Welcome to the chat app
+        socket.emit('newMessage', generateMessage('Admin',' Welcome to the chat app'));
+        //we passed in generateMessage
+        // { 
+        //     from: 'Admin',
+        //     text: 'Welcome to the chat app',
+        //     createdAt: new Date().getTime()
+        // });
+
+        //To everyone except the current user
+        //socket.broadcase.emit from:Admin, text:New user joined
+        socket.broadcast.to(params.room).emit('newMessage',generateMessage('Admin',`${params.name} has joined`))
+        //we passed in generateMessage
+        // {
+        //     from: 'Admin',
+        //     text: 'New user joined',
+        //     createdAt: new Date().getTime()
+        // });
+        callback();
+    });
 
     //Create 'newMessage' event and send to client side
 
