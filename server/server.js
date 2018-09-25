@@ -13,11 +13,13 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 const {isRealString} = require('./utils/validation.js');
+const {Users} = require('./utils/users');
 
 
 var app = express() //web server
 var server = http.createServer(app)
 var io = socketIO(server);
+var users = new Users();
 
 app.use(express.static(publicPath));
 
@@ -32,10 +34,16 @@ io.on('connection',(socket)=>{
     //**listen to join event */
     socket.on('join', (params, callback)=>{
         if(!isRealString(params.name) || !isRealString(params.room)){ //if one of name or room is not a real string
-            callback('Name and Room name are required.');
+            return callback('Name and Room name are required.'); //return, to stop code running
         }
 
         socket.join(params.room);
+        //remove user from previous room and add to new room
+        users.removeUser(socket.id);
+        //addUser(id, name ,room)
+        users.addUser(socket.id, params.name, params.room);
+
+        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
         // socket.leave('room name')
 
         //How to 
@@ -116,6 +124,15 @@ io.on('connection',(socket)=>{
     //When user closed browser(disconnected from the server) will show the message
     socket.on('disconnect',()=>{
         console.log('User was disconnected')
+        //user is the return from removeUsers function
+        var user = users.removeUser(socket.id);
+
+        if(user){
+            //update list
+            io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+            //tell everyone that the user leave
+            io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+        }
     })
 });//io.on 
 

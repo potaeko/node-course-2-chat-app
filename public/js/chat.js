@@ -47,6 +47,18 @@ socket.on('connect',function () {
         }
     })
 
+socket.on('updateUserList', function (users){
+    console.log('Users list' ,users);
+    //add userslist to the page
+    var ol = jQuery('<ol></ol>');
+
+    users.forEach(function (user){
+        ol.append(jQuery('<li></li>').text(user)); //set text property to user
+    })
+
+    jQuery('#users').html(ol);//add ol to 'users' id in chat.html
+});
+
     //Create 'createMessage' event and send to server
     //*we used io.emit('createMessage) instead, in server.js
     // socket.emit('createMessage',{   
