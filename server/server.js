@@ -87,8 +87,14 @@ io.on('connection',(socket)=>{
     //io.emit,
     //***listen to 'createMessage' event from client side
     socket.on('createMessage', (message, callback)=>{
-        console.log('createMessage from client',message);  
-    io.emit('newMessage',generateMessage(message.from, message.text));
+        // console.log('createMessage from client',message); 
+        var user = users.getUser(socket.id);
+        //if the user is exist and the message is string, not empty space
+        if(user&&isRealString(message.text)){
+            io.to(user.room).emit('newMessage',generateMessage(user.name, message.text));
+        } 
+    // io.emit('newMessage',generateMessage(message.from, message.text)); ,we moved into if() above and modified
+
     //we passed in generateMessage
     // {
     //         from: message.from,
@@ -116,8 +122,15 @@ io.on('connection',(socket)=>{
 
         //To show map result from longitude and latitude
         //we added genereateLocationMessage at the top from utils/message
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
-    });
+    //     io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude)) //we modified this line and moved into if(user) below
+    // });
+
+    var user = users.getUser(socket.id);
+    //if the user is exist
+    if(user){
+        io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude))
+    } 
+});
 
 
 
